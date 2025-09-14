@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     const { path, content, message } = req.body;
 
     const response = await fetch(
-        `https://api.github.com/repos/<TUO-UTENTE>/<REPO-B>/contents/${path}`,
+        `https://api.github.com/repos/zRevenger/i20n-knowledgebase-articles/contents/${path}`,
         {
             method: "PUT",
             headers: {
