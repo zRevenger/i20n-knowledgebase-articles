@@ -1,0 +1,93 @@
+﻿[
+  {
+    "id": 1,
+    "titolo": "Motore",
+    "sottotitolo": "Il motore della Hyundai i20N è un 1.6 turbo a quattro cilindri con prestazioni elevate.",
+    "tags": ["meccanica", "motore", "prestazioni"],
+    "categoria": "Meccanica",
+    "autore": "Davide Furfaro",
+    "data":"07/09/2025"
+  },
+  {
+    "id": 2,
+    "titolo": "Freni",
+    "sottotitolo": "I freni sono a disco ventilato con ABS e assistenza elettronica per una guida sicura.",
+    "tags": ["sicurezza", "freni", "tecnica"],
+    "categoria": "Meccanica",
+    "contenuto": "",
+    "autore": "Davide Furfaro",
+    "data":"07/09/2025"
+  },
+  {
+    "id": 3,
+    "titolo": "Sospensioni",
+    "sottotitolo": "Le sospensioni sportive garantiscono stabilità nelle curve ad alta velocità.",
+    "tags": ["assetto", "handling", "sospensioni"],
+    "categoria": "Meccanica",
+    "autore": "Davide Furfaro",
+    "data":"07/09/2025"
+  },
+  {
+    "id": 4,
+    "titolo": "Interni",
+    "sottotitolo": "Gli interni sono ergonomici con sedili sportivi e materiali di alta qualità.",
+    "tags": ["comfort", "interni", "design"],
+    "categoria": "Interni",
+    "autore": "Davide Furfaro",
+    "data":"07/09/2025"
+  },
+  {
+    "id": 5,
+    "titolo": "Infotainment",
+    "sottotitolo": "Il sistema infotainment supporta Android Auto e Apple CarPlay, con display da 10,25 pollici.",
+    "tags": ["tecnologia", "multimedia", "display"],
+    "categoria": "Interni",
+    "autore": "Davide Furfaro",
+    "data":"07/09/2025"
+  },
+  {
+    "id": 6,
+    "titolo": "Sicurezza",
+    "sottotitolo": "Dotazioni di sicurezza includono Airbag, Lane Keeping Assist, e frenata autonoma d'emergenza.",
+    "tags": ["sicurezza", "airbag", "ADAS"],
+    "categoria": "Sicurezza",
+    "autore": "Davide Furfaro",
+    "data":"07/09/2025"
+  },
+  {
+    "id": 7,
+    "titolo": "Ruote e Pneumatici",
+    "sottotitolo": "Le ruote da 18 pollici con pneumatici sportivi garantiscono grip e stabilità.",
+    "tags": ["gomme", "ruote", "performance"],
+    "categoria": "Meccanica",
+    "autore": "Davide Furfaro",
+    "data":"07/09/2025"
+  },
+  {
+    "id": 8,
+    "titolo": "Aerodinamica",
+    "sottotitolo": "Lo spoiler posteriore e il diffusore migliorano l'efficienza aerodinamica e la stabilità.",
+    "tags": ["design", "aerodinamica", "performance"],
+    "categoria": "Design",
+    "autore": "Davide Furfaro",
+    "data":"07/09/2025"
+  },
+  {
+    "id": 9,
+    "titolo": "Cambio",
+    "sottotitolo": "Il cambio manuale a 6 marce offre cambi rapidi e precisi per una guida sportiva.",
+    "tags": ["motore", "cambio", "guidasportiva"],
+    "categoria": "Meccanica",
+    "autore": "Davide Furfaro",
+    "data":"07/09/2025"
+  },
+  {
+    "id": 10,
+    "titolo": "Illuminazione",
+    "sottotitolo": "I fari LED anteriori e posteriori garantiscono ottima visibilità e stile moderno.",
+    "tags": ["luci", "design", "sicurezza"],
+    "categoria": "Design",
+    "autore": "Davide Furfaro",
+    "data":"07/09/2025"
+  }
+]
