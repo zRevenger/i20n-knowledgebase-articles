@@ -6,7 +6,7 @@
     "tags": ["meccanica", "motore", "prestazioni"],
     "categoria": "Meccanica",
     "autore": "Davide Furfaro",
-    "data":"07/09/2025"
+    "data":"2025-09-07"
   },
   {
     "id": 2,
@@ -16,7 +16,7 @@
     "categoria": "Meccanica",
     "contenuto": "",
     "autore": "Davide Furfaro",
-    "data":"07/09/2025"
+    "data":"2025-09-07"
   },
   {
     "id": 3,
@@ -25,7 +25,7 @@
     "tags": ["assetto", "handling", "sospensioni"],
     "categoria": "Meccanica",
     "autore": "Davide Furfaro",
-    "data":"07/09/2025"
+    "data":"2025-09-07"
   },
   {
     "id": 4,
@@ -34,7 +34,7 @@
     "tags": ["comfort", "interni", "design"],
     "categoria": "Interni",
     "autore": "Davide Furfaro",
-    "data":"07/09/2025"
+    "data":"2025-09-07"
   },
   {
     "id": 5,
@@ -43,7 +43,7 @@
     "tags": ["tecnologia", "multimedia", "display"],
     "categoria": "Interni",
     "autore": "Davide Furfaro",
-    "data":"07/09/2025"
+    "data":"2025-09-07"
   },
   {
     "id": 6,
@@ -52,7 +52,7 @@
     "tags": ["sicurezza", "airbag", "ADAS"],
     "categoria": "Sicurezza",
     "autore": "Davide Furfaro",
-    "data":"07/09/2025"
+    "data":"2025-09-07"
   },
   {
     "id": 7,
@@ -61,7 +61,7 @@
     "tags": ["gomme", "ruote", "performance"],
     "categoria": "Meccanica",
     "autore": "Davide Furfaro",
-    "data":"07/09/2025"
+    "data":"2025-09-07"
   },
   {
     "id": 8,
@@ -70,7 +70,7 @@
     "tags": ["design", "aerodinamica", "performance"],
     "categoria": "Design",
     "autore": "Davide Furfaro",
-    "data":"07/09/2025"
+    "data":"2025-09-07"
   },
   {
     "id": 9,
@@ -79,7 +79,7 @@
     "tags": ["motore", "cambio", "guidasportiva"],
     "categoria": "Meccanica",
     "autore": "Davide Furfaro",
-    "data":"07/09/2025"
+    "data":"2025-09-07"
   },
   {
     "id": 10,
@@ -88,6 +88,7 @@
     "tags": ["luci", "design", "sicurezza"],
     "categoria": "Design",
     "autore": "Davide Furfaro",
-    "data":"07/09/2025"
+    "data":"2025-09-07"
   }
 ]
+
