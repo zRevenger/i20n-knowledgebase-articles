@@ -1,74 +1,100 @@
+import fetch from "node-fetch";
+
+const GITHUB_REPO = "zRevenger/i20n-knowledgebase-articles";
+const BRANCH = "main";
+const TOKEN = process.env.GITHUB_TOKEN;
+
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  
   if (req.method !== "POST") return res.status(405).end();
+
   const { path, frontmatter, content, message } = req.body;
 
   try {
-    // 1. Salvo l’articolo .md
-    const mdFile = `---\n${Object.entries(frontmatter)
+    // 1️⃣ Recupera l'ultimo commit e tree del branch
+    const refRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/ref/heads/${BRANCH}`, {
+      headers: { Authorization: `token ${TOKEN}` },
+    });
+    const refData = await refRes.json();
+    const latestCommitSha = refData.object.sha;
+
+    const commitRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits/${latestCommitSha}`, {
+      headers: { Authorization: `token ${TOKEN}` },
+    });
+    const commitData = await commitRes.json();
+    const baseTreeSha = commitData.tree.sha;
+
+    // 2️⃣ Prepara i contenuti da salvare
+    const mdContent = `---\n${Object.entries(frontmatter)
       .map(([k, v]) =>
-        Array.isArray(v) ? `${k}:\n${v.map((t) => `  - ${t}`).join("\n")}` : `${k}: "${v}"`
+        Array.isArray(v)
+          ? `${k}:\n${v.map((t) => `  - ${t}`).join("\n")}`
+          : `${k}: "${v}"`
       )
       .join("\n")}\n---\n\n${content}`;
 
-    await saveFileOnGithub(path, mdFile, message);
-
-    // 2. Aggiorno knowledge.json
-    const knowledgePath = "data/knowledge.json";
-    const { json, sha } = await getFileFromGithub(knowledgePath);
-    let knowledge = JSON.parse(Buffer.from(json.content, "base64").toString());
-
+    // Recupera knowledge.json da GitHub
+    const knowledgeRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/data/knowledge.json`, {
+      headers: { Authorization: `token ${TOKEN}` },
+    });
+    const knowledgeData = await knowledgeRes.json();
+    const knowledge = JSON.parse(Buffer.from(knowledgeData.content, "base64").toString());
     const index = knowledge.findIndex((a) => String(a.id) === String(frontmatter.id));
-    if (index >= 0) {
-      knowledge[index] = { ...knowledge[index], ...frontmatter };
-    } else {
-      knowledge.push(frontmatter);
-    }
+    if (index >= 0) knowledge[index] = { ...knowledge[index], ...frontmatter };
+    else knowledge.push(frontmatter);
 
-    await saveFileOnGithub(
-      knowledgePath,
-      JSON.stringify(knowledge, null, 2),
-      message,
-      sha
-    );
+    const knowledgeContent = JSON.stringify(knowledge, null, 2);
 
-    res.status(200).json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-}
+    // 3️⃣ Crea un nuovo tree con entrambi i file
+    const treeRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/trees`, {
+      method: "POST",
+      headers: { Authorization: `token ${TOKEN}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        base_tree: baseTreeSha,
+        tree: [
+          {
+            path: path,
+            mode: "100644",
+            type: "blob",
+            content: mdContent,
+          },
+          {
+            path: "data/knowledge.json",
+            mode: "100644",
+            type: "blob",
+            content: knowledgeContent,
+          },
+        ],
+      }),
+    });
+    const treeData = await treeRes.json();
 
-async function saveFileOnGithub(path, content, message, sha) {
-  const response = await fetch(
-    `https://api.github.com/repos/zRevenger/i20n-knowledgebase-articles/contents/${path}`,
-    {
-      method: "PUT",
-      headers: {
-        Authorization: `token ${process.env.GITHUB_TOKEN}`,
-        "Content-Type": "application/json",
-      },
+    // 4️⃣ Crea un nuovo commit
+    const newCommitRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits`, {
+      method: "POST",
+      headers: { Authorization: `token ${TOKEN}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         message,
-        content: Buffer.from(content).toString("base64"),
-        branch: "main",
-        sha, // opzionale, solo se update
+        tree: treeData.sha,
+        parents: [latestCommitSha],
       }),
-    }
-  );
-  if (!response.ok) throw new Error("GitHub error: " + (await response.text()));
-  return response.json();
-}
+    });
+    const newCommitData = await newCommitRes.json();
 
-async function getFileFromGithub(path) {
-  const response = await fetch(
-    `https://api.github.com/repos/zRevenger/i20n-knowledgebase-articles/contents/${path}`,
-    {
-      headers: { Authorization: `token ${process.env.GITHUB_TOKEN}` },
-    }
-  );
-  if (!response.ok) throw new Error("GitHub error: " + (await response.text()));
-  return response.json();
+    // 5️⃣ Aggiorna il branch per puntare al nuovo commit
+    await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/refs/heads/${BRANCH}`, {
+      method: "PATCH",
+      headers: { Authorization: `token ${TOKEN}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sha: newCommitData.sha,
+      }),
+    });
+
+    res.status(200).json({ success: true, commitSha: newCommitData.sha });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
 }
