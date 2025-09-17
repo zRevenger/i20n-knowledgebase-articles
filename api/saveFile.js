@@ -19,6 +19,15 @@ export default async function handler(req, res) {
     "Content-Type": "application/json",
   };
 
+  // 🔑 helper: se è già base64 valido non lo riconvertiamo
+  function ensureBase64(content) {
+    const base64regex = /^[A-Za-z0-9+/]+={0,2}$/;
+    if (base64regex.test(content.trim())) {
+      return content.trim(); // già base64 (es. immagine)
+    }
+    return Buffer.from(content, "utf-8").toString("base64"); // testo → base64
+  }
+
   try {
     // Caso singolo file → API contents/ (utile per immagini)
     if (files.length === 1) {
@@ -38,7 +47,7 @@ export default async function handler(req, res) {
         headers,
         body: JSON.stringify({
           message,
-          content: Buffer.from(content, "utf-8").toString("base64"),
+          content: ensureBase64(content),
           branch,
           ...(sha && { sha }),
         }),
@@ -70,7 +79,7 @@ export default async function handler(req, res) {
           path: f.path,
           mode: "100644",
           type: "blob",
-          content: f.content,
+          content: f.isBase64 ? undefined : f.content, // se vogliamo gestire anche raw blobs
         })),
       }),
     });
