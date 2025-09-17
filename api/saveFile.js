@@ -56,21 +56,27 @@ export default async function handler(req, res) {
     }
 
     // 3. aggiorna file normali nello stesso commit come prima
-    const treeItems = files
-      .filter(f => !f.delete)
-      .map(f => ({
-        path: f.path,
-        mode: "100644",
-        type: "blob",
-        content: f.content,
-      }));
-
     const treeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
       method: "POST",
       headers,
       body: JSON.stringify({
         base_tree: baseTree,
-        tree: treeItems,
+        tree: files.map(f => {
+          if (f.delete) {
+            return {
+              path: f.path,
+              mode: "100644",
+              type: "blob",
+              sha: null, // 🔑 segnala rimozione
+            };
+          }
+          return {
+            path: f.path,
+            mode: "100644",
+            type: "blob",
+            content: f.content
+          };
+        }),
       }),
     });
     const treeData = await treeRes.json();
