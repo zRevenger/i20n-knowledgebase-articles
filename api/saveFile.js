@@ -22,63 +22,11 @@ export default async function handler(req, res) {
   // 🔑 helper: se è già base64 valido non lo riconvertiamo
   function ensureBase64(content) {
     const base64regex = /^[A-Za-z0-9+/]+={0,2}$/;
-    if (content && base64regex.test(content.trim())) {
-      return content.trim(); // già base64 (es. immagine)
-    }
-    return Buffer.from(content || "", "utf-8").toString("base64"); // testo → base64
+    if (base64regex.test(content.trim())) return content.trim();
+    return Buffer.from(content, "utf-8").toString("base64");
   }
 
   try {
-    // Caso singolo file → API contents/ (utile per immagini o delete diretto)
-    if (files.length === 1) {
-      const { path, content, delete: toDelete } = files[0];
-      const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
-
-      // Prende SHA se già esiste
-      let sha;
-      const getRes = await fetch(apiUrl, { headers });
-      if (getRes.ok) {
-        const data = await getRes.json();
-        sha = data.sha;
-      }
-
-      if (toDelete) {
-        if (!sha) {
-          return res.status(404).json({ error: "File not found to delete" });
-        }
-        const delRes = await fetch(apiUrl, {
-          method: "DELETE",
-          headers,
-          body: JSON.stringify({
-            message,
-            sha,
-            branch,
-          }),
-        });
-        const data = await delRes.json();
-        if (!delRes.ok) return res.status(delRes.status).json({ error: data });
-        return res.status(200).json({ success: true, commitSha: data.commit.sha });
-      }
-
-      // Upload / update file
-      const putRes = await fetch(apiUrl, {
-        method: "PUT",
-        headers,
-        body: JSON.stringify({
-          message,
-          content: ensureBase64(content),
-          branch,
-          ...(sha && { sha }),
-        }),
-      });
-
-      const data = await putRes.json();
-      if (!putRes.ok) return res.status(putRes.status).json({ error: data });
-
-      return res.status(200).json({ success: true, commitSha: data.commit.sha });
-    }
-
-    // Caso multi-file → commit unico via git API
     // 1. prendi ultimo commit della branch
     const refRes = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, { headers });
     const refData = await refRes.json();
@@ -89,27 +37,39 @@ export default async function handler(req, res) {
     const baseTree = commitData.tree.sha;
 
     // 2. crea un nuovo tree con tutti i file
+    const treeItems = [];
+    for (const f of files) {
+      const apiUrl = `https://api.github.com/repos/${repo}/contents/${f.path}`;
+
+      // Se delete = true, bisogna prendere lo SHA del file esistente
+      let sha;
+      if (f.delete) {
+        const getRes = await fetch(apiUrl, { headers });
+        if (getRes.ok) {
+          const data = await getRes.json();
+          sha = data.sha;
+        } else {
+          continue; // se non esiste, ignoriamo
+        }
+      }
+
+      // Blob per commit
+      treeItems.push({
+        path: f.path,
+        mode: "100644",
+        type: "blob",
+        content: f.delete ? undefined : f.encoding === "base64" ? f.content : ensureBase64(f.content),
+        ...(f.delete && { sha }),
+        ...(f.delete && { type: "blob" }), // GitHub richiede blob anche per delete
+      });
+    }
+
     const treeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
       method: "POST",
       headers,
       body: JSON.stringify({
         base_tree: baseTree,
-        tree: files.map(f => {
-          if (f.delete) {
-            return {
-              path: f.path,
-              mode: "100644",
-              type: "blob",
-              sha: null, // 🔑 segnala rimozione
-            };
-          }
-          return {
-            path: f.path,
-            mode: "100644",
-            type: "blob",
-            content: Buffer.from(f.content || "", "utf-8").toString("base64"),
-          };
-        }),
+        tree: treeItems,
       }),
     });
     const treeData = await treeRes.json();
