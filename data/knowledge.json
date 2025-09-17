@@ -129,5 +129,16 @@
     "categoria": "Design",
     "autore": "Davide Furfaro",
     "data": "2025-09-07"
+  },
+  {
+    "titolo": "Nuovo",
+    "sottotitolo": "Test nuovo articolo da editor",
+    "categoria": "Testing",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-17",
+    "tags": [
+      "Test"
+    ],
+    "id": 11
   }
 ]
