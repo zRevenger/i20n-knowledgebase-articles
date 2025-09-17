@@ -19,7 +19,6 @@ export default async function handler(req, res) {
     "Content-Type": "application/json",
   };
 
-  // 🔑 helper: se è già base64 valido non lo riconvertiamo
   function ensureBase64(content) {
     const base64regex = /^[A-Za-z0-9+/]+={0,2}$/;
     if (base64regex.test(content.trim())) return content.trim();
@@ -36,34 +35,42 @@ export default async function handler(req, res) {
     const commitData = await commitRes.json();
     const baseTree = commitData.tree.sha;
 
-    // 2. crea un nuovo tree con tutti i file
+    // 2. prepara tree items
     const treeItems = [];
+
     for (const f of files) {
-      const apiUrl = `https://api.github.com/repos/${repo}/contents/${f.path}`;
-
-      // Se delete = true, bisogna prendere lo SHA del file esistente
-      let sha;
       if (f.delete) {
-        const getRes = await fetch(apiUrl, { headers });
-        if (getRes.ok) {
-          const data = await getRes.json();
-          sha = data.sha;
+        // prendi SHA necessario per eliminare
+        const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${f.path}`, { headers });
+        if (!getRes.ok) continue; // file non esiste, skip
+        const data = await getRes.json();
+        treeItems.push({
+          path: f.path,
+          mode: "100644",
+          type: "blob",
+          sha: data.sha,
+          // per eliminare si invia solo SHA e PATCH del tree poi in commit
+          // il commit con questo tree "cancella" il file
+          content: undefined,
+        });
+      } else {
+        // file nuovo o aggiornamento
+        let content;
+        if (f.encoding === "base64") {
+          content = f.content; // immagine già in base64
         } else {
-          continue; // se non esiste, ignoriamo
+          content = f.content; // JSON/Markdown normale (UTF-8)
         }
+        treeItems.push({
+          path: f.path,
+          mode: "100644",
+          type: "blob",
+          content,
+        });
       }
-
-      // Blob per commit
-      treeItems.push({
-        path: f.path,
-        mode: "100644",
-        type: "blob",
-        content: f.delete ? undefined : f.encoding === "base64" ? f.content : ensureBase64(f.content),
-        ...(f.delete && { sha }),
-        ...(f.delete && { type: "blob" }), // GitHub richiede blob anche per delete
-      });
     }
 
+    // 3. crea un nuovo tree
     const treeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
       method: "POST",
       headers,
@@ -74,7 +81,7 @@ export default async function handler(req, res) {
     });
     const treeData = await treeRes.json();
 
-    // 3. crea il commit
+    // 4. crea il commit
     const newCommitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits`, {
       method: "POST",
       headers,
@@ -86,7 +93,7 @@ export default async function handler(req, res) {
     });
     const newCommitData = await newCommitRes.json();
 
-    // 4. aggiorna il ref della branch
+    // 5. aggiorna il ref della branch
     await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/${branch}`, {
       method: "PATCH",
       headers,
