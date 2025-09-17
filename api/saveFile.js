@@ -7,7 +7,6 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end("Method not allowed");
 
   const { files, message } = req.body;
-
   if (!files || files.length === 0 || !message) {
     return res.status(400).json({ error: "Missing files or message" });
   }
@@ -19,12 +18,6 @@ export default async function handler(req, res) {
     "Content-Type": "application/json",
   };
 
-  function ensureBase64(content) {
-    const base64regex = /^[A-Za-z0-9+/]+={0,2}$/;
-    if (base64regex.test(content.trim())) return content.trim();
-    return Buffer.from(content, "utf-8").toString("base64");
-  }
-
   try {
     // 1. prendi ultimo commit della branch
     const refRes = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, { headers });
@@ -35,17 +28,13 @@ export default async function handler(req, res) {
     const commitData = await commitRes.json();
     const baseTree = commitData.tree.sha;
 
-    // 2. prepara tree items
-    const treeItems = [];
-
+    // 2. elimina file marcati delete direttamente
     for (const f of files) {
       if (f.delete) {
-        // eliminazione via API contents/ per permettere commit unico
         const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${f.path}`, { headers });
-        if (!getRes.ok) continue;
+        if (!getRes.ok) continue; // file non esiste, skip
         const data = await getRes.json();
-    
-        // DELETE file
+
         const deleteRes = await fetch(`https://api.github.com/repos/${repo}/contents/${f.path}`, {
           method: "DELETE",
           headers,
@@ -57,24 +46,19 @@ export default async function handler(req, res) {
         });
         const deleteData = await deleteRes.json();
         if (!deleteRes.ok) throw new Error(JSON.stringify(deleteData));
-      } else {
-        // file nuovo o aggiornamento
-        let content;
-        if (f.encoding === "base64") {
-          content = f.content;
-        } else {
-          content = f.content;
-        }
-        treeItems.push({
-          path: f.path,
-          mode: "100644",
-          type: "blob",
-          content,
-        });
       }
     }
 
-    // 3. crea un nuovo tree
+    // 3. aggiorna file normali nello stesso commit come prima
+    const treeItems = files
+      .filter(f => !f.delete)
+      .map(f => ({
+        path: f.path,
+        mode: "100644",
+        type: "blob",
+        content: f.encoding === "base64" ? f.content : Buffer.from(f.content || "", "utf-8").toString("base64"),
+      }));
+
     const treeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
       method: "POST",
       headers,
@@ -85,7 +69,6 @@ export default async function handler(req, res) {
     });
     const treeData = await treeRes.json();
 
-    // 4. crea il commit
     const newCommitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits`, {
       method: "POST",
       headers,
@@ -97,7 +80,6 @@ export default async function handler(req, res) {
     });
     const newCommitData = await newCommitRes.json();
 
-    // 5. aggiorna il ref della branch
     await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/${branch}`, {
       method: "PATCH",
       headers,
