@@ -40,26 +40,30 @@ export default async function handler(req, res) {
 
     for (const f of files) {
       if (f.delete) {
-        // prendi SHA necessario per eliminare
+        // eliminazione via API contents/ per permettere commit unico
         const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${f.path}`, { headers });
-        if (!getRes.ok) continue; // file non esiste, skip
+        if (!getRes.ok) continue;
         const data = await getRes.json();
     
-        // Per eliminare nello stesso commit multiplo con il tree API, si usa "sha" ma non "content"
-        treeItems.push({
-          path: f.path,
-          mode: "100644",
-          type: "blob",
-          sha: data.sha,
-          content: null, // 👈 content null indica rimozione del file nel commit
+        // DELETE file
+        const deleteRes = await fetch(`https://api.github.com/repos/${repo}/contents/${f.path}`, {
+          method: "DELETE",
+          headers,
+          body: JSON.stringify({
+            message,
+            sha: data.sha,
+            branch,
+          }),
         });
+        const deleteData = await deleteRes.json();
+        if (!deleteRes.ok) throw new Error(JSON.stringify(deleteData));
       } else {
         // file nuovo o aggiornamento
         let content;
         if (f.encoding === "base64") {
-          content = f.content; // immagine già in base64
+          content = f.content;
         } else {
-          content = f.content; // JSON/Markdown normale (UTF-8)
+          content = f.content;
         }
         treeItems.push({
           path: f.path,
