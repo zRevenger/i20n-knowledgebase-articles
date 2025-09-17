@@ -44,14 +44,14 @@ export default async function handler(req, res) {
         const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${f.path}`, { headers });
         if (!getRes.ok) continue; // file non esiste, skip
         const data = await getRes.json();
+    
+        // Per eliminare nello stesso commit multiplo con il tree API, si usa "sha" ma non "content"
         treeItems.push({
           path: f.path,
           mode: "100644",
           type: "blob",
           sha: data.sha,
-          // per eliminare si invia solo SHA e PATCH del tree poi in commit
-          // il commit con questo tree "cancella" il file
-          content: undefined,
+          content: null, // 👈 content null indica rimozione del file nel commit
         });
       } else {
         // file nuovo o aggiornamento
