@@ -1,1 +1,144 @@
-WwogIHsKICAgICJpZCI6IDEsCiAgICAidGl0b2xvIjogIk1vdG9yZSIsCiAgICAic290dG90aXRvbG8iOiAiSWwgbW90b3JlIGRlbGxhIEh5dW5kYWkgaTIwTiDDqCB1biAxLjYgdHVyYm8gYSBxdWF0dHJvIGNpbGluZHJpIGNvbiBwcmVzdGF6aW9uaSBlbGV2YXRlLiIsCiAgICAidGFncyI6IFsKICAgICAgIm1lY2NhbmljYSIsCiAgICAgICJtb3RvcmUiLAogICAgICAicHJlc3RhemlvbmkiCiAgICBdLAogICAgImNhdGVnb3JpYSI6ICJNZWNjYW5pY2EiLAogICAgImF1dG9yZSI6ICJEYXZpZGUgRnVyZmFybyIsCiAgICAiZGF0YSI6ICIyMDI1LTA5LTA3IgogIH0sCiAgewogICAgImlkIjogMiwKICAgICJ0aXRvbG8iOiAiRnJlbmkiLAogICAgInNvdHRvdGl0b2xvIjogIkkgZnJlbmkgc29ubyBhIGRpc2NvIHZlbnRpbGF0byBjb24gQUJTIGUgYXNzaXN0ZW56YSBlbGV0dHJvbmljYSBwZXIgdW5hIGd1aWRhIHNpY3VyYS4iLAogICAgInRhZ3MiOiBbCiAgICAgICJzaWN1cmV6emEiLAogICAgICAiZnJlbmkiLAogICAgICAidGVjbmljYSIKICAgIF0sCiAgICAiY2F0ZWdvcmlhIjogIk1lY2NhbmljYSIsCiAgICAiY29udGVudXRvIjogIiIsCiAgICAiYXV0b3JlIjogIkRhdmlkZSBGdXJmYXJvIiwKICAgICJkYXRhIjogIjIwMjUtMDktMDciCiAgfSwKICB7CiAgICAiaWQiOiAzLAogICAgInRpdG9sbyI6ICJTb3NwZW5zaW9uaSIsCiAgICAic290dG90aXRvbG8iOiAiTGUgc29zcGVuc2lvbmkgc3BvcnRpdmUgZ2FyYW50aXNjb25vIHN0YWJpbGl0w6AgbmVsbGUgY3VydmUgYWQgYWx0YSB2ZWxvY2l0w6AuIiwKICAgICJ0YWdzIjogWwogICAgICAiYXNzZXR0byIsCiAgICAgICJoYW5kbGluZyIsCiAgICAgICJzb3NwZW5zaW9uaSIKICAgIF0sCiAgICAiY2F0ZWdvcmlhIjogIk1lY2NhbmljYSIsCiAgICAiYXV0b3JlIjogIkRhdmlkZSBGdXJmYXJvIiwKICAgICJkYXRhIjogIjIwMjUtMDktMDciCiAgfSwKICB7CiAgICAiaWQiOiA0LAogICAgInRpdG9sbyI6ICJJbnRlcm5pIiwKICAgICJzb3R0b3RpdG9sbyI6ICJHbGkgaW50ZXJuaSBzb25vIGVyZ29ub21pY2kgY29uIHNlZGlsaSBzcG9ydGl2aSBlIG1hdGVyaWFsaSBkaSBhbHRhIHF1YWxpdMOgLiIsCiAgICAidGFncyI6IFsKICAgICAgImNvbWZvcnQiLAogICAgICAiaW50ZXJuaSIsCiAgICAgICJkZXNpZ24iCiAgICBdLAogICAgImNhdGVnb3JpYSI6ICJJbnRlcm5pIiwKICAgICJhdXRvcmUiOiAiRGF2aWRlIEZ1cmZhcm8iLAogICAgImRhdGEiOiAiMjAyNS0wOS0wNyIKICB9LAogIHsKICAgICJpZCI6IDUsCiAgICAidGl0b2xvIjogIkluZm90YWlubWVudCIsCiAgICAic290dG90aXRvbG8iOiAiSWwgc2lzdGVtYSBpbmZvdGFpbm1lbnQgc3VwcG9ydGEgQW5kcm9pZCBBdXRvIGUgQXBwbGUgQ2FyUGxheSwgY29uIGRpc3BsYXkgZGEgMTAsMjUgcG9sbGljaS4iLAogICAgInRhZ3MiOiBbCiAgICAgICJ0ZWNub2xvZ2lhIiwKICAgICAgIm11bHRpbWVkaWEiLAogICAgICAiZGlzcGxheSIKICAgIF0sCiAgICAiY2F0ZWdvcmlhIjogIkludGVybmkiLAogICAgImF1dG9yZSI6ICJEYXZpZGUgRnVyZmFybyIsCiAgICAiZGF0YSI6ICIyMDI1LTA5LTA3IgogIH0sCiAgewogICAgImlkIjogNiwKICAgICJ0aXRvbG8iOiAiU2ljdXJlenphIiwKICAgICJzb3R0b3RpdG9sbyI6ICJEb3RhemlvbmkgZGkgc2ljdXJlenphIGluY2x1ZG9ubyBBaXJiYWcsIExhbmUgS2VlcGluZyBBc3Npc3QsIGUgZnJlbmF0YSBhdXRvbm9tYSBkJ2VtZXJnZW56YS4iLAogICAgInRhZ3MiOiBbCiAgICAgICJzaWN1cmV6emEiLAogICAgICAiYWlyYmFnIiwKICAgICAgIkFEQVMiCiAgICBdLAogICAgImNhdGVnb3JpYSI6ICJTaWN1cmV6emEiLAogICAgImF1dG9yZSI6ICJEYXZpZGUgRnVyZmFybyIsCiAgICAiZGF0YSI6ICIyMDI1LTA5LTA3IgogIH0sCiAgewogICAgImlkIjogNywKICAgICJ0aXRvbG8iOiAiUnVvdGUgZSBQbmV1bWF0aWNpIiwKICAgICJzb3R0b3RpdG9sbyI6ICJMZSBydW90ZSBkYSAxOCBwb2xsaWNpIGNvbiBwbmV1bWF0aWNpIHNwb3J0aXZpIGdhcmFudGlzY29ubyBncmlwIGUgc3RhYmlsaXTDoC4iLAogICAgInRhZ3MiOiBbCiAgICAgICJnb21tZSIsCiAgICAgICJydW90ZSIsCiAgICAgICJwZXJmb3JtYW5jZSIKICAgIF0sCiAgICAiY2F0ZWdvcmlhIjogIk1lY2NhbmljYSIsCiAgICAiYXV0b3JlIjogIkRhdmlkZSBGdXJmYXJvIiwKICAgICJkYXRhIjogIjIwMjUtMDktMDciCiAgfSwKICB7CiAgICAiaWQiOiA4LAogICAgInRpdG9sbyI6ICJBZXJvZGluYW1pY2EiLAogICAgInNvdHRvdGl0b2xvIjogIkxvIHNwb2lsZXIgcG9zdGVyaW9yZSBlIGlsIGRpZmZ1c29yZSBtaWdsaW9yYW5vIGwnZWZmaWNpZW56YSBhZXJvZGluYW1pY2EgZSBsYSBzdGFiaWxpdMOgLiIsCiAgICAidGFncyI6IFsKICAgICAgImRlc2lnbiIsCiAgICAgICJhZXJvZGluYW1pY2EiLAogICAgICAicGVyZm9ybWFuY2UiCiAgICBdLAogICAgImNhdGVnb3JpYSI6ICJEZXNpZ24iLAogICAgImF1dG9yZSI6ICJEYXZpZGUgRnVyZmFybyIsCiAgICAiZGF0YSI6ICIyMDI1LTA5LTA3IgogIH0sCiAgewogICAgImlkIjogOSwKICAgICJ0aXRvbG8iOiAiQ2FtYmlvIiwKICAgICJzb3R0b3RpdG9sbyI6ICJJbCBjYW1iaW8gbWFudWFsZSBhIDYgbWFyY2Ugb2ZmcmUgY2FtYmkgcmFwaWRpIGUgcHJlY2lzaSBwZXIgdW5hIGd1aWRhIHNwb3J0aXZhLiIsCiAgICAidGFncyI6IFsKICAgICAgIm1vdG9yZSIsCiAgICAgICJjYW1iaW8iLAogICAgICAiZ3VpZGFzcG9ydGl2YSIKICAgIF0sCiAgICAiY2F0ZWdvcmlhIjogIk1lY2NhbmljYSIsCiAgICAiYXV0b3JlIjogIkRhdmlkZSBGdXJmYXJvIiwKICAgICJkYXRhIjogIjIwMjUtMDktMDciCiAgfSwKICB7CiAgICAiaWQiOiAxMCwKICAgICJ0aXRvbG8iOiAiSWxsdW1pbmF6aW9uZSIsCiAgICAic290dG90aXRvbG8iOiAiSSBmYXJpIExFRCBhbnRlcmlvcmkgZSBwb3N0ZXJpb3JpIGdhcmFudGlzY29ubyBvdHRpbWEgdmlzaWJpbGl0w6AgZSBzdGlsZSBtb2Rlcm5vLiIsCiAgICAidGFncyI6IFsKICAgICAgImx1Y2kiLAogICAgICAiZGVzaWduIiwKICAgICAgInNpY3VyZXp6YSIKICAgIF0sCiAgICAiY2F0ZWdvcmlhIjogIkRlc2lnbiIsCiAgICAiYXV0b3JlIjogIkRhdmlkZSBGdXJmYXJvIiwKICAgICJkYXRhIjogIjIwMjUtMDktMDciCiAgfSwKICB7CiAgICAidGl0b2xvIjogIk51b3ZvIiwKICAgICJzb3R0b3RpdG9sbyI6ICJUZXN0IG51b3ZvIGFydGljb2xvIGRhIGVkaXRvciIsCiAgICAiY2F0ZWdvcmlhIjogIlRlc3RpbmciLAogICAgImF1dG9yZSI6ICJEYXZpZGUgRnVyZmFybyIsCiAgICAiZGF0YSI6ICIyMDI1LTA5LTE3IiwKICAgICJ0YWdzIjogWwogICAgICAiVGVzdCIKICAgIF0sCiAgICAiaWQiOiAxMQogIH0sCiAgewogICAgInRpdG9sbyI6ICJ0ZXN0IiwKICAgICJzb3R0b3RpdG9sbyI6ICJ0ZXN0IiwKICAgICJjYXRlZ29yaWEiOiAiVGVzdGluZyIsCiAgICAiYXV0b3JlIjogIkRhdmlkZSBGdXJmYXJvIiwKICAgICJkYXRhIjogIjIwMjUtMDktMTciLAogICAgInRhZ3MiOiBbCiAgICAgICJ0ZXN0IgogICAgXSwKICAgICJpZCI6IDEyCiAgfQpd
+[
+  {
+    "id": 1,
+    "titolo": "Motore",
+    "sottotitolo": "Il motore della Hyundai i20N è un 1.6 turbo a quattro cilindri con prestazioni elevate.",
+    "tags": [
+      "meccanica",
+      "motore",
+      "prestazioni"
+    ],
+    "categoria": "Meccanica",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-07"
+  },
+  {
+    "id": 2,
+    "titolo": "Freni",
+    "sottotitolo": "I freni sono a disco ventilato con ABS e assistenza elettronica per una guida sicura.",
+    "tags": [
+      "sicurezza",
+      "freni",
+      "tecnica"
+    ],
+    "categoria": "Meccanica",
+    "contenuto": "",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-07"
+  },
+  {
+    "id": 3,
+    "titolo": "Sospensioni",
+    "sottotitolo": "Le sospensioni sportive garantiscono stabilità nelle curve ad alta velocità.",
+    "tags": [
+      "assetto",
+      "handling",
+      "sospensioni"
+    ],
+    "categoria": "Meccanica",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-07"
+  },
+  {
+    "id": 4,
+    "titolo": "Interni",
+    "sottotitolo": "Gli interni sono ergonomici con sedili sportivi e materiali di alta qualità.",
+    "tags": [
+      "comfort",
+      "interni",
+      "design"
+    ],
+    "categoria": "Interni",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-07"
+  },
+  {
+    "id": 5,
+    "titolo": "Infotainment",
+    "sottotitolo": "Il sistema infotainment supporta Android Auto e Apple CarPlay, con display da 10,25 pollici.",
+    "tags": [
+      "tecnologia",
+      "multimedia",
+      "display"
+    ],
+    "categoria": "Interni",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-07"
+  },
+  {
+    "id": 6,
+    "titolo": "Sicurezza",
+    "sottotitolo": "Dotazioni di sicurezza includono Airbag, Lane Keeping Assist, e frenata autonoma d'emergenza.",
+    "tags": [
+      "sicurezza",
+      "airbag",
+      "ADAS"
+    ],
+    "categoria": "Sicurezza",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-07"
+  },
+  {
+    "id": 7,
+    "titolo": "Ruote e Pneumatici",
+    "sottotitolo": "Le ruote da 18 pollici con pneumatici sportivi garantiscono grip e stabilità.",
+    "tags": [
+      "gomme",
+      "ruote",
+      "performance"
+    ],
+    "categoria": "Meccanica",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-07"
+  },
+  {
+    "id": 8,
+    "titolo": "Aerodinamica",
+    "sottotitolo": "Lo spoiler posteriore e il diffusore migliorano l'efficienza aerodinamica e la stabilità.",
+    "tags": [
+      "design",
+      "aerodinamica",
+      "performance"
+    ],
+    "categoria": "Design",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-07"
+  },
+  {
+    "id": 9,
+    "titolo": "Cambio",
+    "sottotitolo": "Il cambio manuale a 6 marce offre cambi rapidi e precisi per una guida sportiva.",
+    "tags": [
+      "motore",
+      "cambio",
+      "guidasportiva"
+    ],
+    "categoria": "Meccanica",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-07"
+  },
+  {
+    "id": 10,
+    "titolo": "Illuminazione",
+    "sottotitolo": "I fari LED anteriori e posteriori garantiscono ottima visibilità e stile moderno.",
+    "tags": [
+      "luci",
+      "design",
+      "sicurezza"
+    ],
+    "categoria": "Design",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-07"
+  },
+  {
+    "titolo": "Nuovo",
+    "sottotitolo": "Test nuovo articolo da editor",
+    "categoria": "Testing",
+    "autore": "Davide Furfaro",
+    "data": "2025-09-17",
+    "tags": [
+      "Test"
+    ],
+    "id": 11
+  }
+]
