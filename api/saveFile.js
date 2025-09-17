@@ -22,16 +22,16 @@ export default async function handler(req, res) {
   // 🔑 helper: se è già base64 valido non lo riconvertiamo
   function ensureBase64(content) {
     const base64regex = /^[A-Za-z0-9+/]+={0,2}$/;
-    if (base64regex.test(content.trim())) {
+    if (content && base64regex.test(content.trim())) {
       return content.trim(); // già base64 (es. immagine)
     }
-    return Buffer.from(content, "utf-8").toString("base64"); // testo → base64
+    return Buffer.from(content || "", "utf-8").toString("base64"); // testo → base64
   }
 
   try {
-    // Caso singolo file → API contents/ (utile per immagini)
+    // Caso singolo file → API contents/ (utile per immagini o delete diretto)
     if (files.length === 1) {
-      const { path, content } = files[0];
+      const { path, content, delete: toDelete } = files[0];
       const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
 
       // Prende SHA se già esiste
@@ -42,6 +42,25 @@ export default async function handler(req, res) {
         sha = data.sha;
       }
 
+      if (toDelete) {
+        if (!sha) {
+          return res.status(404).json({ error: "File not found to delete" });
+        }
+        const delRes = await fetch(apiUrl, {
+          method: "DELETE",
+          headers,
+          body: JSON.stringify({
+            message,
+            sha,
+            branch,
+          }),
+        });
+        const data = await delRes.json();
+        if (!delRes.ok) return res.status(delRes.status).json({ error: data });
+        return res.status(200).json({ success: true, commitSha: data.commit.sha });
+      }
+
+      // Upload / update file
       const putRes = await fetch(apiUrl, {
         method: "PUT",
         headers,
@@ -75,12 +94,22 @@ export default async function handler(req, res) {
       headers,
       body: JSON.stringify({
         base_tree: baseTree,
-        tree: files.map(f => ({
-          path: f.path,
-          mode: "100644",
-          type: "blob",
-          content: f.isBase64 ? undefined : f.content, // se vogliamo gestire anche raw blobs
-        })),
+        tree: files.map(f => {
+          if (f.delete) {
+            return {
+              path: f.path,
+              mode: "100644",
+              type: "blob",
+              sha: null, // 🔑 segnala rimozione
+            };
+          }
+          return {
+            path: f.path,
+            mode: "100644",
+            type: "blob",
+            content: Buffer.from(f.content || "", "utf-8").toString("base64"),
+          };
+        }),
       }),
     });
     const treeData = await treeRes.json();
