@@ -17,7 +17,13 @@ export default async function handler(req, res) {
     Authorization: `token ${process.env.GITHUB_TOKEN}`,
     "Content-Type": "application/json",
   };
-
+  
+  function ensureBase64(content) {
+    const base64regex = /^[A-Za-z0-9+/]+={0,2}$/;
+    if (base64regex.test(content.trim())) return content.trim();
+    return Buffer.from(content, "utf-8").toString("base64");
+  }
+  
   try {
     // 1. prendi ultimo commit della branch
     const refRes = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, { headers });
@@ -56,7 +62,7 @@ export default async function handler(req, res) {
         path: f.path,
         mode: "100644",
         type: "blob",
-        content: f.encoding === "base64" ? f.content : Buffer.from(f.content || "", "utf-8").toString("base64"),
+        content: f.content,
       }));
 
     const treeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
