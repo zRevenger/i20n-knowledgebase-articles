@@ -7,6 +7,7 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end("Method not allowed");
 
   const { files, message } = req.body;
+
   if (!files || files.length === 0 || !message) {
     return res.status(400).json({ error: "Missing files or message" });
   }
@@ -17,14 +18,67 @@ export default async function handler(req, res) {
     Authorization: `token ${process.env.GITHUB_TOKEN}`,
     "Content-Type": "application/json",
   };
-  
+
+  // 🔑 helper: se è già base64 valido non lo riconvertiamo
   function ensureBase64(content) {
     const base64regex = /^[A-Za-z0-9+/]+={0,2}$/;
-    if (base64regex.test(content.trim())) return content.trim();
-    return Buffer.from(content, "utf-8").toString("base64");
+    if (content && base64regex.test(content.trim())) {
+      return content.trim(); // già base64 (es. immagine)
+    }
+    return Buffer.from(content || "", "utf-8").toString("base64"); // testo → base64
   }
-  
+
   try {
+    // Caso singolo file → API contents/ (utile per immagini o delete diretto)
+    if (files.length === 1) {
+      const { path, content, delete: toDelete } = files[0];
+      const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
+
+      // Prende SHA se già esiste
+      let sha;
+      const getRes = await fetch(apiUrl, { headers });
+      if (getRes.ok) {
+        const data = await getRes.json();
+        sha = data.sha;
+      }
+
+      if (toDelete) {
+        if (!sha) {
+          return res.status(404).json({ error: "File not found to delete" });
+        }
+        const delRes = await fetch(apiUrl, {
+          method: "DELETE",
+          headers,
+          body: JSON.stringify({
+            message,
+            sha,
+            branch,
+          }),
+        });
+        const data = await delRes.json();
+        if (!delRes.ok) return res.status(delRes.status).json({ error: data });
+        return res.status(200).json({ success: true, commitSha: data.commit.sha });
+      }
+
+      // Upload / update file
+      const putRes = await fetch(apiUrl, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify({
+          message,
+          content: ensureBase64(content),
+          branch,
+          ...(sha && { sha }),
+        }),
+      });
+
+      const data = await putRes.json();
+      if (!putRes.ok) return res.status(putRes.status).json({ error: data });
+
+      return res.status(200).json({ success: true, commitSha: data.commit.sha });
+    }
+
+    // Caso multi-file → commit unico via git API
     // 1. prendi ultimo commit della branch
     const refRes = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, { headers });
     const refData = await refRes.json();
@@ -34,28 +88,7 @@ export default async function handler(req, res) {
     const commitData = await commitRes.json();
     const baseTree = commitData.tree.sha;
 
-    // 2. elimina file marcati delete direttamente
-    for (const f of files) {
-      if (f.delete) {
-        const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${f.path}`, { headers });
-        if (!getRes.ok) continue; // file non esiste, skip
-        const data = await getRes.json();
-
-        const deleteRes = await fetch(`https://api.github.com/repos/${repo}/contents/${f.path}`, {
-          method: "DELETE",
-          headers,
-          body: JSON.stringify({
-            message,
-            sha: data.sha,
-            branch,
-          }),
-        });
-        const deleteData = await deleteRes.json();
-        if (!deleteRes.ok) throw new Error(JSON.stringify(deleteData));
-      }
-    }
-
-    // 3. aggiorna file normali nello stesso commit come prima
+    // 2. crea un nuovo tree con tutti i file
     const treeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
       method: "POST",
       headers,
@@ -74,13 +107,14 @@ export default async function handler(req, res) {
             path: f.path,
             mode: "100644",
             type: "blob",
-            content: f.content
+            content: f.content,
           };
         }),
       }),
     });
     const treeData = await treeRes.json();
 
+    // 3. crea il commit
     const newCommitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits`, {
       method: "POST",
       headers,
@@ -92,6 +126,7 @@ export default async function handler(req, res) {
     });
     const newCommitData = await newCommitRes.json();
 
+    // 4. aggiorna il ref della branch
     await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/${branch}`, {
       method: "PATCH",
       headers,
